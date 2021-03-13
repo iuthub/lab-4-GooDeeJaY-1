@@ -42,15 +42,19 @@ li {
 }
 
 .mp3item {
-	list-style-image: url(http://www.cs.washington.edu/education/courses/cse190m/09sp/labs/3-music/mp3icon.gif);
+	list-style-image: url(icons/mp3icon.gif);
 }
 
 .playlistitem {
-	list-style-image: url(http://www.cs.washington.edu/education/courses/cse190m/09sp/labs/3-music/playlisticon.gif);
+	list-style-image: url(icons/playlisticon.gif);
 }
 
 #return {
-	list-style-image: url(https://courses.cs.washington.edu/courses/cse190m/09sp/labs/3-music/back.gif);
+	list-style-image: url(icons/back.gif);
+}
+
+#shuffle {
+	list-style-image: url(icons/shuffle.png);
 }
 
 ul {

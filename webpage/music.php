@@ -44,9 +44,13 @@
                     $size = round($size/1024/1024, 2) . ' mb';
                 }
 
-                print "<li class='mp3item'> <a href=\"$filename\">".basename($filename)." ($size) </a></li>";
+                print "<li class='mp3item'> <a href='$filename'>".basename($filename)." ($size) </a></li>";
             }
         }
+
+        $param = isset($_GET['playlist'])? "&playlist=".$_GET['playlist']: "";
+        print "<li id='shuffle'><a href='music.php?shuffle=on$param'>Shuffle</a>";
+        print " | <a href='music.php?bysize=on$param'>By size</a></li>";
 
         if (isset($_GET['playlist'])) {
             $playlist =  file_get_contents('songs/'.$_GET['playlist']);
@@ -57,13 +61,13 @@
             }
 
             listSongs($songs);
-            print "<li id='return'><a href=\"music.php\">Go back</a></li>";
+            print "<li id='return'><a href='music.php'>Go back</a></li>";
         }
         else {
             listSongs(glob("songs/*.mp3"));
             foreach (glob("songs/*.m3u") as $filename) {
                 $filename = basename($filename);
-                print '<li class="playlistitem"> <a href="music.php?playlist='.$filename."\"> $filename </a></li>";
+                print "<li class='playlistitem'> <a href='music.php?playlist=$filename'> $filename </a></li>";
             }
         }
         ?>
