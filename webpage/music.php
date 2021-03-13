@@ -16,20 +16,32 @@
 <div id="listarea">
     <ul id="musiclist">
         <?php
+        function listSongs($songs) {
+            foreach ($songs as $filename) {
+                if (!str_starts_with($filename, 'songs/')){
+                    $filename = "songs/".$filename;
+                }
+                $size = filesize($filename);
+                if ($size >= 0 and $size <= 1023){
+                    $size = $size . ' b';
+                } elseif ($size >= 1024 and $size <= 1048575){
+                    $size = round($size/1024, 2) . ' kb';
+                } else {
+                    $size = round($size/1024/1024, 2) . ' mb';
+                }
+
+                print "<li class=\"mp3item\"> <a href=\"$filename\">".basename($filename)." ($size) </a></li>";
+            }
+        }
+
         if (isset($_GET['playlist'])) {
             $playlist =  file_get_contents('songs/'.$_GET['playlist']);
-            foreach (explode("\n", $playlist) as $song) {
-                print '<li class="mp3item"> <a href="'.$song.'">'.basename($song).'</a></li>';
-            }
-
+            listSongs(explode(PHP_EOL, $playlist));
         } else {
-            foreach (glob("songs/*.mp3") as $filename) {
-                print '<li class="mp3item"> <a href="'.$filename.'">'.basename($filename).'</a></li>';
-            }
-
+            listSongs(glob("songs/*.mp3"));
             foreach (glob("songs/*.txt") as $filename) {
                 $filename = basename($filename);
-                print '<li class="playlistitem"> <a href="music.php?playlist='.$filename.'">'.$filename.'</a></li>';
+                print '<li class="playlistitem"> <a href="music.php?playlist='.$filename."\"> $filename </a></li>";
             }
         }
         ?>
