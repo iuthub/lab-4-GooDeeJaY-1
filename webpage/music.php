@@ -16,11 +16,25 @@
 <div id="listarea">
     <ul id="musiclist">
         <?php
+        function isSong($line){
+            return $line != "" and !str_starts_with($line, '#');
+        }
+
+        function cmpSize($a, $b){
+            $a = filesize($a);
+            $b = filesize($b);
+            if ($a == $b) return 0;
+            return ($a < $b) ? 1 : -1;
+        }
+
         function listSongs($songs) {
+            if (isset($_GET['shuffle'])){
+                if ($_GET['shuffle'] == "on") shuffle($songs);
+            }
+            elseif (isset($_GET['bysize'])){
+                if ($_GET['bysize'] == "on") usort($songs, "cmpSize");
+            }
             foreach ($songs as $filename) {
-                if (!str_starts_with($filename, 'songs/')){
-                    $filename = "songs/".$filename;
-                }
                 $size = filesize($filename);
                 if ($size >= 0 and $size <= 1023){
                     $size = $size . ' b';
@@ -30,16 +44,24 @@
                     $size = round($size/1024/1024, 2) . ' mb';
                 }
 
-                print "<li class=\"mp3item\"> <a href=\"$filename\">".basename($filename)." ($size) </a></li>";
+                print "<li class='mp3item'> <a href=\"$filename\">".basename($filename)." ($size) </a></li>";
             }
         }
 
         if (isset($_GET['playlist'])) {
             $playlist =  file_get_contents('songs/'.$_GET['playlist']);
-            listSongs(explode(PHP_EOL, $playlist));
-        } else {
+
+            $songs = array_filter(explode(PHP_EOL, $playlist), "isSong");
+            foreach ($songs as &$song) {
+                $song = 'songs/'.$song;
+            }
+
+            listSongs($songs);
+            print "<li id='return'><a href=\"music.php\">Go back</a></li>";
+        }
+        else {
             listSongs(glob("songs/*.mp3"));
-            foreach (glob("songs/*.txt") as $filename) {
+            foreach (glob("songs/*.m3u") as $filename) {
                 $filename = basename($filename);
                 print '<li class="playlistitem"> <a href="music.php?playlist='.$filename."\"> $filename </a></li>";
             }
