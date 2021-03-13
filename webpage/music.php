@@ -16,12 +16,21 @@
 <div id="listarea">
     <ul id="musiclist">
         <?php
-        foreach (glob("songs/*.mp3") as $filename) {
-            print '<li class="mp3item"> <a href="'.$filename.'">'.basename($filename).'</a></li>';
-        }
+        if (isset($_GET['playlist'])) {
+            $playlist =  file_get_contents('songs/'.$_GET['playlist']);
+            foreach (explode("\n", $playlist) as $song) {
+                print '<li class="mp3item"> <a href="'.$song.'">'.basename($song).'</a></li>';
+            }
 
-        foreach (glob("songs/*.txt") as $filename) {
-            print '<li class="playlistitem"> <a href="'.$filename.'">'.basename($filename).'</a></li>';
+        } else {
+            foreach (glob("songs/*.mp3") as $filename) {
+                print '<li class="mp3item"> <a href="'.$filename.'">'.basename($filename).'</a></li>';
+            }
+
+            foreach (glob("songs/*.txt") as $filename) {
+                $filename = basename($filename);
+                print '<li class="playlistitem"> <a href="music.php?playlist='.$filename.'">'.$filename.'</a></li>';
+            }
         }
         ?>
     </ul>
